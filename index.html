@@ -528,6 +528,31 @@
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
 
+        /* --- ZOOM IMAGE MODAL --- */
+        .zoomable-img {
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+        .zoomable-img:hover {
+            transform: scale(1.02);
+        }
+        .modal-content-image {
+            max-width: 95vw;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content-image img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            animation: popIn 0.3s ease;
+        }
+
     </style>
 </head>
 <body>
@@ -612,7 +637,12 @@
 
         <!-- Infografia adicionada aqui -->
         <div style="width: 100%; margin-bottom: 25px; text-align: center;">
-            <img src="./infografia-sangue.jpg" alt="Infografia do Sistema Sanguíneo" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <img src="./infografia-sangue.jpg" 
+                 alt="Infografia do Sistema Sanguíneo" 
+                 class="zoomable-img"
+                 onclick="app.openImageModal(this.src)"
+                 style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <p style="font-size: 0.8rem; color: #777; margin-top: 5px;">(Clica na imagem para ampliar)</p>
         </div>
 
         <div class="study-grid">
@@ -806,6 +836,14 @@
             <div id="fb-icon" style="font-size: 3rem; margin: 15px 0;"></div>
             <p id="fb-message" style="line-height: 1.5; color: #555;">Mensagem.</p>
             <button id="fb-btn" class="btn-action">Ação</button>
+        </div>
+    </div>
+
+    <!-- MODAL ZOOM IMAGEM -->
+    <div class="modal-overlay" id="image-modal" onclick="app.closeImageModal()">
+        <div class="modal-content-image">
+            <img id="img-zoom-target" src="" alt="Zoom Infografia">
+            <p style="color: white; margin-top: 10px; font-weight: bold; text-shadow: 1px 1px 3px black;">(Clique em qualquer lugar para fechar)</p>
         </div>
     </div>
 </div>
@@ -1225,6 +1263,17 @@ const app = {
         };
         
         modal.style.display = 'flex';
+    },
+
+    openImageModal: (src) => {
+        const modal = document.getElementById('image-modal');
+        const img = document.getElementById('img-zoom-target');
+        img.src = src;
+        modal.style.display = 'flex';
+    },
+
+    closeImageModal: () => {
+        document.getElementById('image-modal').style.display = 'none';
     },
 
     finishGame: (manualEntry = false) => {
