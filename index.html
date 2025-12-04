@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missão Sanguínea: Curso Completo</title>
+    <style>
+        :root {
+            --primary-red: #e63946;
+            --dark-red: #b92b36;
+            --soft-red: #ffedee;
+            --blue-accent: #457b9d;
+            --text-dark: #1d3557;
+            --bg-color: #f0f4f8;
+            --success: #2a9d8f;
+            --warning: #e9c46a;
+            --error: #e76f51;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .home-btn-header {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+
+        .home-btn-header:hover { background: rgba(255,255,255,0.4); }
+
+        header h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+        .progress-bar { height: 6px; background: rgba(255,255,255,0.3); margin-top: 10px; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #fff; width: 0%; transition: width 0.5s ease; }
+
+        /* --- SCREENS --- */
+        .screen {
+            padding: 1.5rem;
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.4s ease-in-out;
+            overflow-y: auto;
+            padding-bottom: 80px; /* Space for footer/lab bench */
+        }
+
+        .screen.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- HOME SCREEN --- */
+        .welcome-text { text-align: center; max-width: 600px; line-height: 1.6; margin-bottom: 2rem; color: #555; }
+        
+        .main-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .menu-btn {
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-btn:hover { transform: translateY(-3px); border-color: var(--primary-red); box-shadow: 0 4px 15px rgba(230, 57, 70, 0.15); }
+        .menu-btn.study { border-color: #e3f2fd; background: #f8fbff; }
+        .menu-btn.study:hover { border-color: var(--blue-accent); }
+        
+        .menu-btn h3 { margin: 0 0 5px 0; color: var(--text-dark); font-size: 1.1rem; }
+        .menu-btn p { margin: 0; color: #666; font-size: 0.9rem; }
+        .icon-large { font-size: 2rem; min-width: 50px; text-align: center; }
+
+        .badge-done {
+            position: absolute; right: 15px; top: 15px;
+            background: var(--success); color: white;
+            font-size: 0.7rem; padding: 2px 8px; border-radius: 10px;
+            display: none;
+        }
+        .menu-btn.completed .badge-done { display: block; }
+
+        /* --- SALA DE ESTUDO --- */
+        .study-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .study-card {
+            background: white;
+            border-left: 5px solid #ccc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .study-card h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .study-card p { line-height: 1.5; color: #444; font-size: 0.95rem; }
+        
+        .card-red { border-color: var(--primary-red); }
+        .card-white { border-color: #adb5bd; }
+        .card-platelet { border-color: #a8dadc; }
+        .card-plasma { border-color: #e9c46a; }
+
+        /* Resumos Expandidos */
+        .study-summary {
+            width: 100%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+        .study-summary h3 { color: var(--primary-red); border-bottom: 2px solid var(--soft-red); padding-bottom: 10px; }
+        .study-summary ul { padding-left: 20px; color: #444; }
+        .study-summary li { margin-bottom: 8px; }
+
+        /* --- FLASHCARDS --- */
+        .flashcard-container {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .flashcard.flipped { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        .card-front {
+            background: white;
+            border: 2px solid var(--primary-red);
+        }
+        
+        .card-back {
+            background: var(--primary-red);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .card-label { text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 10px; opacity: 0.7; }
+        .card-content { font-size: 1.3rem; font-weight: bold; line-height: 1.4; }
+
+        .controls { display: flex; gap: 20px; margin-top: 20px; align-items: center; }
+
+        /* --- MATCHING GAME --- */
+        .matching-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .match-card {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 80px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            user-select: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .match-card:hover { border-color: var(--blue-accent); background: #f0f7fa; transform: translateY(-2px); }
+        .match-card.selected { border-color: var(--blue-accent); background: var(--blue-accent); color: white; transform: scale(1.02); }
+        .match-card.matched { border-color: var(--success); background: var(--success); color: white; opacity: 0.6; pointer-events: none; transform: scale(0.95); }
+        .match-card.wrong { border-color: var(--error); background: var(--error); color: white; animation: shake 0.4s; }
+
+        @keyframes shake {
+            0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); }
+        }
+
+        /* --- GAME UI (Quiz & Lab) --- */
+        .scenario-box {
+            width: 100%;
+            min-height: 180px;
+            background: #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            background-image: radial-gradient(#dee2e6 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .scenario-instruction {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 90%;
+            font-size: 1.1rem;
+            border-left: 5px solid var(--primary-red);
+        }
+
+        /* Quiz Layout */
+        .options-grid { display: grid; gap: 12px; width: 100%; max-width: 600px; }
+        .option-btn {
+            background: white; border: 1px solid #ddd; padding: 18px;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: space-between;
+        }
+        .option-btn:hover { background: var(--soft-red); border-color: var(--primary-red); transform: translateX(5px); }
+        .option-btn::after { content: '➜'; opacity: 0; transition: opacity 0.2s; }
+        .option-btn:hover::after { opacity: 1; }
+
+        /* Lab Layout */
+        .lab-bench {
+            background: white; padding: 1rem; 
+            border-top: 1px solid #ddd; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            width: 100%; display: flex; justify-content: center;
+            align-items: center; gap: 20px; flex-wrap: wrap;
+            position: fixed; bottom: 0; max-width: 800px; z-index: 100;
+        }
+
+        .lab-drop-zone {
+            width: 100%; height: 100%; position: absolute; z-index: 5;
+            display: flex; justify-content: center; align-items: center;
+            transition: all 0.3s;
+        }
+
+        .lab-drop-zone.drag-over {
+            background: rgba(42, 157, 143, 0.2);
+            backdrop-filter: blur(2px);
+        }
+
+        .lab-drop-zone.drag-over .drop-target-indicator {
+            transform: scale(1.05);
+            border-color: var(--success);
+            color: var(--success);
+            background: white;
+        }
+
+        .drop-target-indicator {
+            border: 3px dashed var(--primary-red);
+            background: rgba(255, 255, 255, 0.8);
+            width: 90%; height: 80%; border-radius: 20px;
+            display: flex; justify-content: center; align-items: center;
+            color: var(--primary-red); font-weight: bold; padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .certificate-container {
+            border: 10px double var(--text-dark);
+            padding: 40px;
+            text-align: center;
+            background: #fff;
+            position: relative;
+            max-width: 700px;
+            width: 100%;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: none; /* Hidden until generated */
+            background-image: radial-gradient(circle at center, rgba(230, 57, 70, 0.05) 0%, transparent 70%);
+        }
+        
+        .certificate-title {
+            font-family: 'Georgia', serif;
+            font-size: 2.2rem;
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-red);
+            display: inline-block;
+            padding-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .cert-text { font-size: 1.1rem; margin: 15px 0; color: #444; }
+        
+        .student-name { 
+            font-family: 'Brush Script MT', 'Segoe Script', cursive; 
+            font-size: 3rem; 
+            color: var(--text-dark); 
+            margin: 10px 0 20px 0; 
+            border-bottom: 1px solid #ccc; 
+            display: inline-block; 
+            min-width: 300px;
+            padding: 0 20px;
+        }
+
+        .stats-box {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .cert-stat { 
+            font-weight: bold; 
+            color: var(--blue-accent); 
+            font-size: 1rem; 
+            background: #f0f7fa;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #bde0fe;
+        }
+        
+        .cert-rank { 
+            color: var(--success); 
+            font-weight: bold; 
+            font-size: 1.6rem; 
+            margin: 30px 0;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.1); 
+        }
+        
+        .cert-date { font-style: italic; color: #666; margin-top: 40px; font-size: 0.9rem; }
+        .cert-signature {
+            margin-top: 40px;
+            border-top: 1px solid #000;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .input-group {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            margin: auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+        
+        .name-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            transition: border 0.2s;
+        }
+        
+        .name-input:focus { border-color: var(--primary-red); outline: none; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #app { box-shadow: none; min-height: auto; max-width: none; background: white; }
+            #screen-certificate, #screen-certificate * { visibility: visible; }
+            #screen-certificate { 
+                position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; 
+                display: block !important;
+            }
+            .certificate-container { 
+                border: 5px double #000; 
+                box-shadow: none; 
+                display: block !important; 
+                margin: 0 auto;
+                width: 100%;
+                page-break-inside: avoid;
+            }
+            .no-print { display: none !important; }
+            header, .lab-bench { display: none !important; }
+        }
+
+        /* --- CELL ART (CSS Only) --- */
+        .cell-icon {
+            cursor: grab; display: flex; flex-direction: column;
+            align-items: center; transition: transform 0.2s;
+            user-select: none;
+        }
+        .cell-icon:active { cursor: grabbing; transform: scale(1.1); }
+        .cell-icon span { font-size: 0.8rem; margin-top: 5px; font-weight: bold; color: #555; }
+
+        .art-rbc {
+            width: 45px; height: 45px; background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
+            border-radius: 50%; box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .art-rbc::after { content: ''; width: 15px; height: 15px; background: rgba(0,0,0,0.15); border-radius: 50%; }
+
+        .art-wbc {
+            width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #f8f9fa, #a5d8ff);
+            border-radius: 45% 55% 40% 60%; position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1); border: 1px solid #dee2e6;
+        }
+        .art-wbc::before { content: ''; position: absolute; top: 15px; left: 15px; width: 12px; height: 12px; background: #74c0fc; border-radius: 50%; opacity: 0.5; }
+
+        .art-platelet {
+            width: 35px; height: 35px; background: #a8dadc;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+        }
+
+        .art-plasma {
+            width: 45px; height: 45px; background: rgba(250, 229, 136, 0.9);
+            border: 2px solid #fcc419; border-radius: 10px 25px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 0.7rem; color: #e67700; font-weight: bold;
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none;
+            justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background: white; padding: 2rem; border-radius: 12px;
+            max-width: 450px; width: 90%; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .btn-action {
+            padding: 12px 30px; border: none; border-radius: 30px;
+            font-size: 1rem; cursor: pointer; font-weight: bold; margin-top: 15px;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .btn-next { background: var(--success); color: white; }
+        .btn-retry { background: var(--error); color: white; }
+
+        /* Confetti Effect */
+        .confetti {
+            position: fixed; width: 10px; height: 10px;
+            background-color: #f00; animation: confetti-fall linear forwards;
+            z-index: 9999;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <button class="home-btn-header" onclick="app.goHome()"><span>🏠</span> Início</button>
+        <h1>Missão: Sistema Sanguíneo</h1>
+        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    </header>
+
+    <!-- TELA 1: HOME -->
+    <section id="screen-home" class="screen active">
+        <h2>Base de Operações</h2>
+        <p class="welcome-text">
+            Bem-vindo ao centro de controlo do corpo humano. Começa pelo estudo teórico, treina com Flashcards e depois avança para os desafios práticos.
+        </p>
+        
+        <div class="main-menu">
+            <!-- Botão Sala de Estudo -->
+            <div class="menu-btn study" onclick="app.showStudyRoom()">
+                <div class="icon-large">📚</div>
+                <div>
+                    <h3>Sala de Estudo</h3>
+                    <p>Fichas técnicas e Resumos Teóricos.</p>
+                </div>
+            </div>
+
+            <!-- Botão Flashcards -->
+            <div class="menu-btn study" onclick="app.startFlashcards()">
+                <div class="icon-large">🗂️</div>
+                <div>
+                    <h3>Flashcards</h3>
+                    <p>Revisão de conceitos (Termos e Definições).</p>
+                </div>
+            </div>
+
+            <!-- Botão Correspondência -->
+            <div class="menu-btn" id="btn-match" onclick="app.startMatching()">
+                <div class="badge-done" id="badge-match">Concluído</div>
+                <div class="icon-large">🧩</div>
+                <div>
+                    <h3>Correspondência</h3>
+                    <p>Atividade de ligar termos às definições.</p>
+                </div>
+            </div>
+
+            <!-- Botões de Jogo -->
+            <div class="menu-btn" id="btn-quiz" onclick="app.startMode('quiz')">
+                <div class="badge-done" id="badge-quiz">Concluído</div>
+                <div class="icon-large">📋</div>
+                <div>
+                    <h3>Diagnóstico Rápido</h3>
+                    <p>Modo Quiz (Cenários Clínicos).</p>
+                </div>
+            </div>
+            
+            <div class="menu-btn" id="btn-lab" onclick="app.startMode('lab')">
+                <div class="badge-done" id="badge-lab">Concluído</div>
+                <div class="icon-large">🔬</div>
+                <div>
+                    <h3>Laboratório Prático</h3>
+                    <p>Modo Prático (Arrastar e Largar).</p>
+                </div>
+            </div>
+
+            <!-- Botão Certificado (Só aparece no menu se tiver feito algo, ou pode ser acedido ao fim dos jogos) -->
+            <div class="menu-btn" onclick="app.finishGame(true)">
+                <div class="icon-large">🎓</div>
+                <div>
+                    <h3>Emitir Certificado</h3>
+                    <p>Ver o teu relatório de desempenho.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TELA 2: SALA DE ESTUDO -->
+    <section id="screen-study" class="screen">
+        <h2>Síntese dos Componentes</h2>
+        <p style="margin-bottom: 20px; text-align: center;">Consulta estas fichas técnicas antes de enfrentares os desafios.</p>
+
+        <!-- Infografia adicionada aqui -->
+        <div style="width: 100%; margin-bottom: 25px; text-align: center;">
+            <img src="./infografia-sangue.jpg" alt="Infografia do Sistema Sanguíneo" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        </div>
+
+        <div class="study-grid">
+            <div class="study-card card-red">
+                <h3><div class="art-rbc" style="width: 30px; height: 30px; margin-right: 10px;"></div> Glóbulos Vermelhos</h3>
+                <p><strong>Nome técnico:</strong> Eritrócitos.</p>
+                <p><strong>Função:</strong> Transporte.</p>
+                <p>São as células mais abundantes. Contêm hemoglobina, uma proteína que agarra o Oxigénio (O2) nos pulmões e leva-o a todas as células do corpo. Tempo de vida médio: 120 dias.</p>
+            </div>
+
+            <div class="study-card card-white">
+                <h3><div class="art-wbc" style="width: 30px; height: 30px; margin-right: 10px;"></div> Glóbulos Brancos</h3>
+                <p><strong>Nome técnico:</strong> Leucócitos.</p>
+                <p><strong>Função:</strong> Defesa.</p>
+                <p>São os "soldados" do corpo. Identificam e destroem invasores como vírus e bactérias (fagocitose) e produzem anticorpos (aglutininas).</p>
+            </div>
+
+            <div class="study-card card-platelet">
+                <h3><div class="art-platelet" style="width: 30px; height: 30px; margin-right: 10px;"></div> Plaquetas</h3>
+                <p><strong>Nome técnico:</strong> Trombócitos.</p>
+                <p><strong>Função:</strong> Coagulação.</p>
+                <p>Não são células completas, mas fragmentos. Quando há um corte, aglomeram-se para criar uma "rede" ou tampão, estancando a hemorragia.</p>
+            </div>
+
+            <div class="study-card card-plasma">
+                <h3><div class="art-plasma" style="width: 30px; height: 30px; margin-right: 10px;">Liq</div> Plasma</h3>
+                <p><strong>Estado:</strong> Líquido (90% água).</p>
+                <p><strong>Função:</strong> Meio de Transporte.</p>
+                <p>É o "rio" onde tudo flutua. Transporta as células sanguíneas, nutrientes (glicose), hormonas, resíduos e proteínas.</p>
+            </div>
+        </div>
+
+        <h2>Caderno de Resumos Teóricos</h2>
+        <p style="text-align: center; color: #666;">Informação extraída do manual <em>Fisiologia do Sangue Humano</em></p>
+
+        <div class="study-summary">
+            <h3>🩸 Funções Gerais do Sangue</h3>
+            <ul>
+                <li><strong>Transporte:</strong> Move gases (O2, CO2), nutrientes, hormonas e resíduos metabólicos.</li>
+                <li><strong>Regulação:</strong> Mantém o pH, a temperatura corporal e o equilíbrio hídrico das células.</li>
+                <li><strong>Proteção:</strong> Previne a perda de sangue (coagulação) e combate agentes patogénicos (imunidade).</li>
+            </ul>
+        </div>
+
+        <div class="study-summary">
+            <h3>🧬 Grupos Sanguíneos</h3>
+            <ul>
+                <li><strong>Descoberta:</strong> Karl Landsteiner descobriu os grupos no início do séc. XX (Prémio Nobel 1930).</li>
+                <li><strong>Sistema ABO:</strong> Baseado na presença de antígenos A ou B na superfície das hemácias.</li>
+                <li><strong>Sistema Rh:</strong> Determina se o sangue é Positivo (+) ou Negativo (-), crucial para evitar a doença hemolítica em gravidezes.</li>
+                <li><strong>Aglutininas:</strong> Anticorpos naturais presentes no plasma que atacam tipos de sangue incompatíveis.</li>
+            </ul>
+        </div>
+
+        <div class="study-summary">
+            <h3>⚠️ Patologias e Riscos</h3>
+            <ul>
+                <li><strong>Doenças Transmissíveis:</strong> O sangue pode veicular agentes como HIV, Hepatite B e C, Sífilis e Doença de Chagas.</li>
+                <li><strong>Anemia:</strong> Redução de hemoglobina ou eritrócitos, causando fadiga e palidez.</li>
+                <li><strong>Hemofilia:</strong> Deficiência nos fatores de coagulação, dificultando o estancamento de hemorragias.</li>
+            </ul>
+        </div>
+        
+        <button class="btn-action" style="background:#888; margin: 20px auto;" onclick="app.goHome()">Voltar ao Topo</button>
+    </section>
+
+    <!-- TELA FLASHCARDS -->
+    <section id="screen-flashcards" class="screen">
+        <h2>Flashcards de Revisão</h2>
+        <p>Clica no cartão para ver a resposta.</p>
+
+        <div class="flashcard-container" onclick="app.flipCard()">
+            <div class="flashcard" id="flashcard-element">
+                <div class="card-face card-front">
+                    <div class="card-label">Pergunta</div>
+                    <div class="card-content" id="fc-question">Carregando...</div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="card-label">Resposta</div>
+                    <div class="card-content" id="fc-answer">...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-action" style="background: #ccc; color: #333;" onclick="app.prevCard()">⬅ Anterior</button>
+            <span id="fc-counter" style="align-self: center; font-weight: bold; min-width: 60px; text-align:center;">1/10</span>
+            <button class="btn-action" style="background: var(--blue-accent);" onclick="app.nextCard()">Seguinte ➡</button>
+        </div>
+    </section>
+
+    <!-- TELA MATCHING (CORRESPONDÊNCIA) -->
+    <section id="screen-matching" class="screen">
+        <h2>Atividade de Correspondência</h2>
+        <p>Seleciona um termo e depois a sua definição correta.</p>
+        
+        <div class="matching-grid" id="match-grid">
+            <!-- Cards injetados via JS -->
+        </div>
+    </section>
+
+    <!-- TELA 3: QUIZ -->
+    <section id="screen-quiz" class="screen">
+        <div class="scenario-box">
+            <div class="scenario-instruction" id="quiz-question-text">A carregar missão...</div>
+        </div>
+        <div class="options-grid" id="quiz-options"></div>
+    </section>
+
+    <!-- TELA 4: LABORATÓRIO -->
+    <section id="screen-lab" class="screen">
+        <div class="scenario-box">
+            <div class="lab-drop-zone" id="lab-target">
+                <div class="drop-target-indicator">
+                    <span id="lab-instruction">Instrução...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="lab-bench">
+            <div class="cell-icon" draggable="true" ondragstart="app.drag(event)" data-type="globulo-vermelho">
+                <div class="art-rbc"></div><span>Vermelho</span>
+            </div>
+            <div class="cell-icon" draggable="true" ondragstart="app.drag(event)" data-type="globulo-branco">
+                <div class="art-wbc"></div><span>Branco</span>
+            </div>
+            <div class="cell-icon" draggable="true" ondragstart="app.drag(event)" data-type="plaqueta">
+                <div class="art-platelet"></div><span>Plaqueta</span>
+            </div>
+            <div class="cell-icon" draggable="true" ondragstart="app.drag(event)" data-type="plasma">
+                <div class="art-plasma">Liq</div><span>Plasma</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- TELA 5: CERTIFICADO / RELATÓRIO -->
+    <section id="screen-certificate" class="screen">
+        <h2>Relatório Final</h2>
+        <p class="no-print">Consulta o teu progresso. Preenche o teu nome para validar o certificado.</p>
+
+        <!-- Input para Nome -->
+        <div id="cert-input-area" class="input-group no-print">
+            <p style="margin-top:0;"><strong>Parabéns!</strong></p>
+            <p>Resumo da sessão:</p>
+            <div style="display:flex; justify-content:space-around; margin-bottom:15px; font-size:0.9rem; color:#555;">
+                <span>Quiz: <b id="preview-score-quiz">-</b></span>
+                <span>Lab: <b id="preview-score-lab">-</b></span>
+                <span>Match: <b id="preview-score-match">-</b></span>
+            </div>
+            <input type="text" id="student-name-input" class="name-input" placeholder="O teu nome aqui..." onkeypress="if(event.key === 'Enter') app.generateCertificate()">
+            <button class="btn-action btn-next" onclick="app.generateCertificate()">Gerar Certificado Oficial</button>
+        </div>
+
+        <!-- Área do Certificado -->
+        <div id="certificate-display" class="certificate-container">
+            <h1 class="certificate-title">Certificado de Mérito</h1>
+            
+            <p class="cert-text">Certifica-se que</p>
+            <div class="student-name" id="cert-name-display">Nome do Aluno</div>
+            
+            <p class="cert-text">concluiu com distinção o módulo prático de</p>
+            <h3 style="color: var(--text-dark); margin: 15px 0; font-size: 1.4rem;">FISIOLOGIA DO SANGUE HUMANO</h3>
+            
+            <div class="stats-box">
+                <div class="cert-stat" id="stat-quiz">Quiz: -</div>
+                <div class="cert-stat" id="stat-lab">Lab: -</div>
+                <div class="cert-stat" id="stat-match">Correspondência: -</div>
+            </div>
+
+            <div class="cert-rank" id="cert-rank-display">Nível: ---</div>
+
+            <p class="cert-text" style="font-size: 0.95rem; margin-top: 30px;">
+                Demonstrando competências teóricas e práticas na identificação<br>
+                dos componentes sanguíneos e resolução de cenários clínicos.
+            </p>
+            
+            <div class="cert-date" id="cert-date-display">Data</div>
+            <div class="cert-signature">O Computador Biológico</div>
+
+            <div class="no-print" style="margin-top: 30px;">
+                <button class="btn-action btn-next" onclick="window.print()">🖨️ Imprimir / PDF</button>
+                <button class="btn-action btn-retry" onclick="location.reload()">🔄 Reiniciar Curso</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL FEEDBACK -->
+    <div class="modal-overlay" id="feedback-modal">
+        <div class="modal-content">
+            <h2 id="fb-title">Título</h2>
+            <div id="fb-icon" style="font-size: 3rem; margin: 15px 0;"></div>
+            <p id="fb-message" style="line-height: 1.5; color: #555;">Mensagem.</p>
+            <button id="fb-btn" class="btn-action">Ação</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* DADOS FLASHCARDS (Extraídos do CSV) */
+const flashcardsData = [
+    { q: "Quem descobriu os grupos sanguíneos ABO?", a: "Karl Landsteiner (Prémio Nobel 1930)." },
+    { q: "O que determina o tipo sanguíneo?", a: "A presença de antígenos na superfície das hemácias." },
+    { q: "Quais os sistemas sanguíneos mais importantes clinicamente?", a: "O sistema ABO e o Sistema Rh." },
+    { q: "Como se chamam os anticorpos do sangue?", a: "Aglutininas." },
+    { q: "Qual a função principal do sangue?", a: "Transporte de nutrientes, gases, hormonas e resíduos." },
+    { q: "Qual a percentagem de plasma no sangue?", a: "Cerca de 55% do volume total." },
+    { q: "Quais são os elementos figurados do sangue?", a: "Hemácias, Leucócitos e Plaquetas." },
+    { q: "Qual a função da Hemoglobina?", a: "Transportar oxigénio dentro dos glóbulos vermelhos." },
+    { q: "Qual o tempo de vida de uma hemácia?", a: "Cerca de 120 dias." },
+    { q: "O que acontece se um Rh- recebe sangue Rh+?", a: "Desenvolve anticorpos anti-Rh (sensibilização)." },
+    { q: "Qual a função das Plaquetas?", a: "Coagulação sanguínea e estancamento de hemorragias." },
+    { q: "O que fazem os Leucócitos?", a: "Defesa do organismo contra infeções." }
+];
+
+/* BANCO DE MISSÕES (6 Cenários) */
+const bancoMissoes = [
+    {
+        id: "transporte_o2",
+        pergunta: "As células musculares estão a gastar muita energia e pedem oxigénio urgente. Quem envias?",
+        instrucao_lab: "Células sem fôlego! Arrasta o transportador de O2.",
+        correto: "globulo-vermelho",
+        opcoes: [
+            { id: "plasma", texto: "Plasma" },
+            { id: "globulo-vermelho", texto: "Glóbulos Vermelhos" },
+            { id: "globulo-branco", texto: "Glóbulos Brancos" }
+        ],
+        feedback: {
+            sucesso: "Correto! Os glóbulos vermelhos transportam o O2 dos pulmões até aos tecidos.",
+            erro_globulo_branco: "Errado. Os glóbulos brancos defendem, não transportam gases.",
+            erro_plasma: "O plasma transporta nutrientes, mas o O2 precisa da hemoglobina dos glóbulos vermelhos."
+        }
+    },
+    {
+        id: "infeccao_bacteria",
+        pergunta: "Uma bactéria invadiu o corpo através de um corte sujo. Quem deve atacar?",
+        instrucao_lab: "Invasor detetado! Arrasta a defesa.",
+        correto: "globulo-branco",
+        opcoes: [
+            { id: "globulo-branco", texto: "Glóbulos Brancos" },
+            { id: "plaqueta", texto: "Plaquetas" },
+            { id: "globulo-vermelho", texto: "Glóbulos Vermelhos" }
+        ],
+        feedback: {
+            sucesso: "Certo! Os glóbulos brancos identificam o intruso e realizam a fagocitose (comem a bactéria).",
+            erro_globulo_vermelho: "Cuidado! Glóbulos vermelhos não têm defesas contra bactérias.",
+            erro_plaqueta: "As plaquetas fecham cortes, mas não matam bactérias ativas."
+        }
+    },
+    {
+        id: "corte_pele",
+        pergunta: "Hemorragia ativa! Um vaso sanguíneo rompeu-se. Quem faz o 'penso rápido' interno?",
+        instrucao_lab: "Fuga de sangue! Arrasta o coagulante.",
+        correto: "plaqueta",
+        opcoes: [
+            { id: "globulo-branco", texto: "Glóbulos Brancos" },
+            { id: "plaqueta", texto: "Plaquetas" },
+            { id: "plasma", texto: "Plasma" }
+        ],
+        feedback: {
+            sucesso: "Exato! As plaquetas aglomeram-se para criar um tampão e parar a saída de sangue.",
+            erro_plasma: "O plasma é líquido. Se o usares, ele vai apenas vazar pelo corte.",
+            erro_globulo_vermelho: "Estás a perder glóbulos vermelhos pelo corte! Precisas de tapar o buraco primeiro."
+        }
+    },
+    {
+        id: "transporte_nutrientes",
+        pergunta: "Acabaste de almoçar. Quem leva os nutrientes (glicose) do intestino para o resto do corpo?",
+        instrucao_lab: "Alimento digerido! Quem o transporta?",
+        correto: "plasma",
+        opcoes: [
+            { id: "globulo-vermelho", texto: "Glóbulos Vermelhos" },
+            { id: "plaqueta", texto: "Plaquetas" },
+            { id: "plasma", texto: "Plasma" }
+        ],
+        feedback: {
+            sucesso: "Muito bem! O Plasma é a parte líquida que dissolve e transporta nutrientes como açúcares e proteínas.",
+            erro_globulo_vermelho: "Não. Os glóbulos vermelhos são especializados apenas em gases (O2 e CO2).",
+            erro_globulo_branco: "Os glóbulos brancos estão ocupados a vigiar inimigos, não transportam comida."
+        }
+    },
+    {
+        id: "exaustao_anemia",
+        pergunta: "O paciente sente-se muito cansado e pálido (anemia). Falta-lhe a célula que dá energia e cor ao sangue.",
+        instrucao_lab: "Paciente sem energia e pálido. O que falta?",
+        correto: "globulo-vermelho",
+        opcoes: [
+            { id: "plaqueta", texto: "Plaquetas" },
+            { id: "globulo-vermelho", texto: "Glóbulos Vermelhos" },
+            { id: "plasma", texto: "Plasma" }
+        ],
+        feedback: {
+            sucesso: "Correto! A anemia é muitas vezes causada pela falta de glóbulos vermelhos (ou ferro), reduzindo o oxigénio disponível.",
+            erro_plaqueta: "A falta de plaquetas causaria nódoas negras, não cansaço extremo.",
+            erro_plasma: "O volume de líquido pode estar normal, mas sem as células vermelhas, não há oxigénio suficiente."
+        }
+    },
+    {
+        id: "virus_gripe",
+        pergunta: "Um vírus da gripe entrou nas células. Precisamos de produzir anticorpos específicos.",
+        instrucao_lab: "Vírus detetado! Quem produz anticorpos?",
+        correto: "globulo-branco",
+        opcoes: [
+            { id: "plasma", texto: "Plasma" },
+            { id: "globulo-vermelho", texto: "Glóbulos Vermelhos" },
+            { id: "globulo-branco", texto: "Glóbulos Brancos" }
+        ],
+        feedback: {
+            sucesso: "Certo! Um tipo especial de glóbulos brancos (linfócitos) cria anticorpos para neutralizar vírus.",
+            erro_globulo_vermelho: "Os glóbulos vermelhos não interagem com vírus.",
+            erro_plasma: "O plasma transporta os anticorpos depois de feitos, mas quem os produz são os glóbulos brancos."
+        }
+    }
+];
+
+const app = {
+    currentMode: null,
+    queue: [],
+    currentIndex: 0,
+    score: 0,
+    
+    // Armazena resultados globais
+    results: {
+        quiz: 0,
+        lab: 0,
+        matching: 0,
+        matchingTotal: 0,
+        playedQuiz: false,
+        playedLab: false,
+        playedMatch: false
+    },
+    
+    // Flashcards state
+    fcIndex: 0,
+    fcFlipped: false,
+
+    // Matching Game state
+    matchSelected: null,
+    matchPairs: [],
+    matchScore: 0,
+    matchTotal: 0,
+
+    // Função para baralhar arrays
+    shuffle: (array) => {
+        return array.sort(() => Math.random() - 0.5);
+    },
+
+    goHome: () => {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-home').classList.add('active');
+        document.querySelector('.progress-fill').style.width = '0%';
+        app.updateHomeBadges();
+    },
+
+    updateHomeBadges: () => {
+        if(app.results.playedQuiz) document.getElementById('btn-quiz').classList.add('completed');
+        if(app.results.playedLab) document.getElementById('btn-lab').classList.add('completed');
+        if(app.results.playedMatch) document.getElementById('btn-match').classList.add('completed');
+    },
+
+    showStudyRoom: () => {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-study').classList.add('active');
+        window.scrollTo(0,0);
+    },
+
+    /* --- FLASHCARDS LOGIC --- */
+    startFlashcards: () => {
+        app.fcIndex = 0;
+        app.fcFlipped = false;
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-flashcards').classList.add('active');
+        app.loadFlashcard();
+    },
+
+    loadFlashcard: () => {
+        const card = flashcardsData[app.fcIndex];
+        const cardElem = document.getElementById('flashcard-element');
+        
+        // Reset flip state
+        app.fcFlipped = false;
+        cardElem.classList.remove('flipped');
+
+        // Update Text after small delay to hide transition if flipped
+        setTimeout(() => {
+            document.getElementById('fc-question').innerText = card.q;
+            document.getElementById('fc-answer').innerText = card.a;
+            document.getElementById('fc-counter').innerText = `${app.fcIndex + 1} / ${flashcardsData.length}`;
+        }, 150);
+    },
+
+    flipCard: () => {
+        app.fcFlipped = !app.fcFlipped;
+        const card = document.getElementById('flashcard-element');
+        if(app.fcFlipped) card.classList.add('flipped');
+        else card.classList.remove('flipped');
+    },
+
+    nextCard: () => {
+        if(app.fcIndex < flashcardsData.length - 1) {
+            app.fcIndex++;
+            app.loadFlashcard();
+        }
+    },
+
+    prevCard: () => {
+        if(app.fcIndex > 0) {
+            app.fcIndex--;
+            app.loadFlashcard();
+        }
+    },
+
+    /* --- MATCHING GAME LOGIC --- */
+    startMatching: () => {
+        app.matchSelected = null;
+        app.matchScore = 0;
+        
+        // Selecionar 6 pares aleatórios para o jogo não ficar enorme
+        const subset = app.shuffle([...flashcardsData]).slice(0, 6);
+        app.matchTotal = subset.length;
+        app.results.matchingTotal = subset.length;
+
+        // Criar cartas separadas para pergunta e resposta
+        let cards = [];
+        subset.forEach((item, index) => {
+            cards.push({ id: index, type: 'q', text: item.q, pairId: index });
+            cards.push({ id: index, type: 'a', text: item.a, pairId: index });
+        });
+
+        // Baralhar todas as cartas
+        cards = app.shuffle(cards);
+
+        // Renderizar
+        const grid = document.getElementById('match-grid');
+        grid.innerHTML = '';
+        cards.forEach(card => {
+            const el = document.createElement('div');
+            el.className = 'match-card';
+            el.innerText = card.text;
+            el.onclick = () => app.handleMatchClick(el, card);
+            grid.appendChild(el);
+        });
+
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-matching').classList.add('active');
+    },
+
+    handleMatchClick: (el, cardData) => {
+        // Ignorar se já combinado
+        if(el.classList.contains('matched')) return;
+        // Ignorar se clicar no mesmo
+        if(el.classList.contains('selected')) {
+            el.classList.remove('selected');
+            app.matchSelected = null;
+            return;
+        }
+
+        el.classList.add('selected');
+
+        if(app.matchSelected === null) {
+            // Primeiro clique
+            app.matchSelected = { el: el, data: cardData };
+        } else {
+            // Segundo clique - verificar match
+            const first = app.matchSelected;
+            
+            if(first.data.pairId === cardData.pairId && first.data.type !== cardData.type) {
+                // SUCESSO
+                first.el.classList.remove('selected');
+                el.classList.remove('selected');
+                first.el.classList.add('matched');
+                el.classList.add('matched');
+                first.el.innerText = "✅";
+                el.innerText = "✅";
+                app.matchScore++;
+                
+                // Grava score global
+                app.results.matching = app.matchScore;
+
+                if(app.matchScore === app.matchTotal) {
+                    app.results.playedMatch = true;
+                    setTimeout(() => app.showModal("Parabéns!", "🧩", "Completaste todas as correspondências!", "Voltar ao Menu", "btn-next", false), 500);
+                }
+            } else {
+                // ERRO
+                first.el.classList.add('wrong');
+                el.classList.add('wrong');
+                setTimeout(() => {
+                    first.el.classList.remove('selected', 'wrong');
+                    el.classList.remove('selected', 'wrong');
+                }, 600);
+            }
+            app.matchSelected = null;
+        }
+    },
+
+    /* --- QUIZ & LAB LOGIC --- */
+    startMode: (mode) => {
+        app.currentMode = mode;
+        app.currentIndex = 0;
+        app.score = 0;
+        
+        // CRIAÇÃO DA FILA ALEATÓRIA:
+        app.queue = app.shuffle([...bancoMissoes]);
+
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${mode}`).classList.add('active');
+        
+        app.loadLevel();
+    },
+
+    loadLevel: () => {
+        if (app.currentIndex >= app.queue.length) {
+            app.finishGame();
+            return;
+        }
+
+        const mission = app.queue[app.currentIndex];
+        
+        // Atualiza barra de progresso
+        const progress = (app.currentIndex / app.queue.length) * 100;
+        document.querySelector('.progress-fill').style.width = `${progress}%`;
+
+        if (app.currentMode === 'quiz') {
+            document.getElementById('quiz-question-text').innerText = mission.pergunta;
+            const container = document.getElementById('quiz-options');
+            container.innerHTML = '';
+            
+            const opcoesBaralhadas = app.shuffle([...mission.opcoes]);
+            
+            opcoesBaralhadas.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.texto;
+                btn.onclick = () => app.checkAnswer(opt.id);
+                container.appendChild(btn);
+            });
+
+        } else if (app.currentMode === 'lab') {
+            document.getElementById('lab-instruction').innerText = mission.instrucao_lab;
+            const dropZone = document.getElementById('lab-target');
+            
+            // Reset visual
+            dropZone.classList.remove('drag-over');
+            
+            // Events
+            dropZone.ondragover = (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            };
+            dropZone.ondragleave = (e) => {
+                dropZone.classList.remove('drag-over');
+            }
+            dropZone.ondrop = (e) => app.drop(e);
+        }
+    },
+
+    drag: (ev) => {
+        ev.dataTransfer.setData("type", ev.target.getAttribute('data-type'));
+    },
+
+    drop: (ev) => {
+        ev.preventDefault();
+        document.getElementById('lab-target').classList.remove('drag-over');
+        const type = ev.dataTransfer.getData("type");
+        if(type) app.checkAnswer(type);
+    },
+
+    checkAnswer: (answerType) => {
+        const mission = app.queue[app.currentIndex];
+        const isCorrect = answerType === mission.correto;
+        
+        let feedbackText = "";
+        let title = isCorrect ? "Excelente!" : "Atenção...";
+        let icon = isCorrect ? "✅" : "⚠️";
+        let btnClass = isCorrect ? "btn-next" : "btn-retry";
+        let btnText = isCorrect ? "Próximo Desafio" : "Tentar de Novo";
+
+        if (isCorrect) {
+            feedbackText = mission.feedback.sucesso;
+            app.score++;
+        } else {
+            const errorKey = `erro_${answerType}`;
+            feedbackText = mission.feedback[errorKey] || "Essa célula não resolve este problema.";
+        }
+
+        app.showModal(title, icon, feedbackText, btnText, btnClass, isCorrect);
+    },
+
+    showModal: (title, icon, text, btnText, btnClass, isCorrect) => {
+        const modal = document.getElementById('feedback-modal');
+        document.getElementById('fb-title').innerText = title;
+        document.getElementById('fb-icon').innerText = icon;
+        document.getElementById('fb-message').innerText = text;
+        
+        const btn = document.getElementById('fb-btn');
+        btn.innerText = btnText;
+        btn.className = `btn-action ${btnClass}`;
+        
+        btn.onclick = () => {
+            modal.style.display = 'none';
+            // Se for do Quiz/Lab e estiver correto, avança
+            if (app.currentMode && isCorrect) {
+                app.currentIndex++;
+                app.loadLevel();
+            }
+            // Se for mensagem de fim de jogo do matching
+            if (!app.currentMode) {
+                 app.goHome();
+            }
+        };
+        
+        modal.style.display = 'flex';
+    },
+
+    finishGame: (manualEntry = false) => {
+        // Salvar pontuações se veio de um jogo
+        if(!manualEntry && app.currentMode) {
+            app.results[app.currentMode] = app.score;
+            if(app.currentMode === 'quiz') app.results.playedQuiz = true;
+            if(app.currentMode === 'lab') app.results.playedLab = true;
+        }
+
+        document.querySelector('.progress-fill').style.width = `100%`;
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-certificate').classList.add('active');
+        
+        // Mostrar preview dos dados
+        document.getElementById('preview-score-quiz').innerText = app.results.playedQuiz ? `${app.results.quiz}/6` : 'N/A';
+        document.getElementById('preview-score-lab').innerText = app.results.playedLab ? `${app.results.lab}/6` : 'N/A';
+        document.getElementById('preview-score-match').innerText = app.results.playedMatch ? `${app.results.matching}/${app.results.matchingTotal}` : 'N/A';
+        
+        document.getElementById('cert-input-area').style.display = 'block';
+        document.getElementById('certificate-display').style.display = 'none';
+        
+        app.currentMode = null;
+    },
+
+    generateCertificate: () => {
+        const nameInput = document.getElementById('student-name-input').value;
+        if(nameInput.trim() === "") {
+            alert("Por favor, introduz o teu nome.");
+            return;
+        }
+
+        // 1. Preencher Nome
+        document.getElementById('cert-name-display').innerText = nameInput;
+
+        // 2. Preencher Stats
+        document.getElementById('stat-quiz').innerText = `Quiz: ${app.results.quiz} / 6`;
+        document.getElementById('stat-lab').innerText = `Lab: ${app.results.lab} / 6`;
+        document.getElementById('stat-match').innerText = `Match: ${app.results.matching}`;
+
+        // 3. Calcular Rank
+        // Total possível: 6 (Quiz) + 6 (Lab) + N (Match)
+        const totalPoints = app.results.quiz + app.results.lab + app.results.matching;
+        let rank = "Estagiário de Hematologia";
+        
+        if (totalPoints > 15) rank = "Especialista em Hematologia";
+        else if (totalPoints > 10) rank = "Técnico de Análises";
+        else if (totalPoints > 5) rank = "Assistente de Laboratório";
+        
+        document.getElementById('cert-rank-display').innerText = rank;
+
+        // 4. Data
+        const today = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('cert-date-display').innerText = `Lisboa, ${today.toLocaleDateString('pt-PT', options)}`;
+
+        // 5. Mostrar UI
+        document.getElementById('cert-input-area').style.display = 'none';
+        const certContainer = document.getElementById('certificate-display');
+        certContainer.style.display = 'block';
+
+        // 6. Efeito Confetti
+        app.fireConfetti();
+    },
+
+    fireConfetti: () => {
+        const colors = ['#e63946', '#457b9d', '#e9c46a', '#2a9d8f'];
+        for(let i=0; i<50; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(confetti);
+            
+            // Remover depois da animação
+            setTimeout(() => confetti.remove(), 5000);
+        }
+    }
+};
+</script>
+</body>
+</html>
